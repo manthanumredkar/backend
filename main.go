@@ -109,6 +109,18 @@ func memberHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // CREATE MEMBER
+func getDomainCode(domain string) string {
+	switch domain {
+	case "software":
+		return "SD"
+	case "electrical":
+		return "EL"
+	case "aeromech":
+		return "AM"
+	default:
+		return ""
+	}
+}
 func createMember(w http.ResponseWriter, r *http.Request) {
 
 	var member Member
@@ -141,6 +153,12 @@ func createMember(w http.ResponseWriter, r *http.Request) {
 
 	member.ID = nextID
 	nextID++
+
+	domainCode := getDomainCode(member.Domain)
+	year := member.ExpectedYearOfPassing % 100
+	serial := member.ID
+
+	member.TempRtfID = fmt.Sprintf("%s%02d%02d@RTF", domainCode, year, serial)
 
 	members[member.ID] = member
 
